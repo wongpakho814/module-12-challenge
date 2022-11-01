@@ -25,16 +25,20 @@ function viewAllEmployee(db) {
 
 // Function that returns all role titles from the role table as an array
 function getRoleTitles(db) {
-  db.promise()
-    .query(`SELECT title FROM role`)
-    .then(([rows, fields]) => {
-      return rows.map((role) => role.title);
-    })
-    .catch(console.log);
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT title FROM role`, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.map((role) => role.title));
+        }
+      });
+    });
 }
 
 // Function to prompt the user about the information of the employee to be added, and perform the SQL query based on that
-function addEmployee(db) {
+async function addEmployee(db) {
+  const roles = await getRoleTitles(db);
   return new Promise((resolve, reject) => {
     inquirer
       .prompt([
@@ -52,7 +56,7 @@ function addEmployee(db) {
           type: "list",
           name: "role",
           message: "What is the employee's role?",
-          choices: getRoleTitles(db),
+          choices: roles,
         },
         {
           type: "input",
@@ -69,6 +73,5 @@ function addEmployee(db) {
 
 module.exports = {
   viewAllEmployee,
-  getRoleTitles,
   addEmployee,
 };
