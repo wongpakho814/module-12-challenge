@@ -40,25 +40,26 @@ async function init() {
   let isFinished = false;
   while (isFinished === false) {
     await showMenu().then((respond) => {
-      if (respond.options === "View All Employees") {
-        return employeeQueries.viewAllEmployee(db);
-      } else if (respond.options === "Add Employee") {
-        return employeeQueries.addEmployee(db);
-      } else if (respond.options === "Update Employee Role") {
-        return employeeQueries.updateEmployeeRole(db);
-      } else if (respond.options === "View All Roles") {
-        return roleQueries.viewAllRole(db);
-      } else if (respond.options === "Add Role") {
-        return roleQueries.addRole(db);
-      } else if (respond.options === "View All Departments") {
-        return departmentQueries.viewAllDepartment(db);
-      } else if (respond.options === "Add Department") {
-        return departmentQueries.addDepartment(db);
-      } else {
-        isFinished = true;
-        console.log("See you next time!");
-        process.exit(0);
-      } 
+      switch (respond.options) {
+        case "View All Employees":
+          return employeeQueries.viewAllEmployee(db);
+        case "Add Employee":
+          return employeeQueries.addEmployee(db);
+        case "Update Employee Role":
+          return employeeQueries.updateEmployeeRole(db);
+        case "View All Roles":
+          return roleQueries.viewAllRole(db);
+        case "Add Role":
+          return roleQueries.addRole(db);
+        case "View All Departments":
+          return departmentQueries.viewAllDepartment(db);
+        case "Add Department":
+          return departmentQueries.addDepartment(db);
+        default:
+          isFinished = true;
+          console.log("See you next time!");
+          process.exit(0);
+      }
     });
   }
 }
