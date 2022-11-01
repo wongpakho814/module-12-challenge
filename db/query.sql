@@ -1,1 +1,1 @@
-SELECT id, title, (SELECT name FROM department AS d WHERE d.id = r.department_id) AS department, salary FROM role AS r;
+SELECT * FROM department;

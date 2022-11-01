@@ -2,7 +2,8 @@ const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 const employeeQueries = require("./queries/employeeQueries.js");
-const roleQueries = require("./queries/roleQueries");
+const roleQueries = require("./queries/roleQueries.js");
+const departmentQueries = require("./queries/departmentQueries.js");
 
 // Connect to database
 const db = mysql.createConnection(
@@ -47,6 +48,10 @@ async function init() {
         return employeeQueries.updateEmployeeRole(db);
       } else if (respond.options === "View All Roles") {
         return roleQueries.viewAllRole(db);
+      } else if (respond.options === "Add Role") {
+        return roleQueries.addRole(db);
+      } else if (respond.options === "View All Departments") {
+        return departmentQueries.viewAllDepartment(db);
       }
     });
   }

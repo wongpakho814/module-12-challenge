@@ -58,9 +58,43 @@ function getEmployeeNames(db) {
   });
 }
 
+// Function that returns all department names
+function getDepartmentNames(db) {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT name FROM department`,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.map((department) => department.name));
+        }
+      }
+    );
+  });
+}
+
+// Function that return the id of the department given the department's name
+function getDepartmentId(db, data) {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT id FROM department WHERE name = "${data}"`,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.map((department_id) => department_id.id));
+        }
+      }
+    );
+  });
+}
+
 module.exports = {
   getRoleTitles,
   getRoleId,
   getEmployeeId,
   getEmployeeNames,
+  getDepartmentNames,
+  getDepartmentId,
 };
