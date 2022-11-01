@@ -11,6 +11,7 @@ select the options they want to perform.
 ## Installation
 
 Please make sure to run the command "npm install" to install all required node modules before running the program. 
+Please also make sure to run "schema.sql" for initializing the database, and "seeds.sql" testing.
 
 ## Usage
 
