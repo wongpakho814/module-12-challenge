@@ -19,7 +19,7 @@ function getRoleTitles(db) {
 function getRoleId(db, data) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT id FROM role WHERE title = "${data.role}"`,
+        `SELECT id FROM role WHERE title = "${data}"`,
         (err, result) => {
           if (err) {
             reject(err);
@@ -31,16 +31,16 @@ function getRoleId(db, data) {
     });
 }
 
-// Function to get the manager_id specified by the name of the employee
-function getManagerId(db, data) {
+// Function to get the employee id specified by the name of the employee
+function getEmployeeId(db, data) {
     return new Promise((resolve, reject) => {
       db.query(
-        `SELECT id FROM employee WHERE CONCAT_WS(" ", first_name, last_name) = "${data.manager}"`,
+        `SELECT id FROM employee WHERE CONCAT_WS(" ", first_name, last_name) = "${data}"`,
         (err, result) => {
           if (err) {
             reject(err);
           } else {
-            resolve(result.map((manager_id) => manager_id.id));
+            resolve(result.map((employee_id) => employee_id.id));
           }
         }
       );
@@ -85,8 +85,8 @@ ORDER BY e.id;`;
 
 // Function to prompt the user about the information of the employee to be added, and perform the SQL query based on that
 async function addEmployee(db) {
-  const roles = await getRoleTitles(db); // Getting an array of titles for the choice parameter
-  const names = await getEmployeeNames(db); // Getting an array of employee names for the choice parameter
+  const roles = await getRoleTitles(db); // Getting an array of role titles for the choices parameter
+  const names = await getEmployeeNames(db); // Getting an array of employee names for the choices parameter
   names.unshift("None");
 
   return new Promise((resolve, reject) => {
@@ -116,14 +116,14 @@ async function addEmployee(db) {
         },
       ])
       .then(async (data) => {
-        const role_id = await getRoleId(db, data); // Converting the role title to role_id
-        const manager_id = await getManagerId(db, data); // Converting the employee name to manager_id
+        const role_id = await getRoleId(db, data.role); // Converting the role title to role_id
+        const employee_id = await getEmployeeId(db, data.manager); // Converting the employee name to the id
         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
         const params = [
           data.firstName,
           data.lastName,
           role_id[0],
-          manager_id[0]
+          employee_id[0]
         ];
 
         db.promise()
@@ -139,7 +139,51 @@ async function addEmployee(db) {
   });
 }
 
+// Function to perform the query that update an employee's role
+async function updateEmployeeRole(db) {
+  const employeeList = await getEmployeeNames(db); // Getting an array of employee names for the choices parameter
+  const roles = await getRoleTitles(db); // Getting an array of role titles for the choices parameter
+
+  return new Promise((resolve, reject) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "employee",
+          message: "Which employee's role do you want to update?",
+          choices: employeeList,
+        },
+        {
+          type: "list",
+          name: "newRole",
+          message: "Which role do you want to assign the selected employee?",
+          choices: roles,
+        },
+      ])
+      .then(async (data) => {
+        const role_id = await getRoleId(db, data.newRole); // Converting the role title to role_id
+        const employee_id = await getEmployeeId(db, data.employee); // Converting the employee name to the id
+        const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+        const params = [
+          role_id[0],
+          employee_id[0],
+        ];
+
+        db.promise()
+          .query(sql, params)
+          .then(([rows, fields]) => {
+            resolve(rows);
+          })
+          .catch(console.log);
+
+        console.log(`Updated ${data.employee}'s role`);
+        resolve(data);
+      });
+  });
+}
+
 module.exports = {
   viewAllEmployee,
   addEmployee,
+  updateEmployeeRole
 };

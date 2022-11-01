@@ -42,6 +42,8 @@ async function init() {
         return queries.viewAllEmployee(db);
       } else if (respond.options === "Add Employee") {
         return queries.addEmployee(db);
+      } else if (respond.options === "Update Employee Role") {
+        return queries.updateEmployeeRole(db);
       }
     });
   }
