@@ -40,6 +40,8 @@ async function init() {
     await showMenu().then((respond) => {
       if (respond.options === "View All Employees") {
         return queries.viewAllEmployee(db);
+      } else if (respond.options === "Add Employee") {
+        return queries.addEmployee(db);
       }
     });
   }
