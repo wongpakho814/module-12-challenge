@@ -36,6 +36,7 @@ const showMenu = () => {
       "View All Departments",
       "Add Department",
       "Delete Department",
+      "Total Utilized Budget Of A Department",
       "Quit",
     ],
   });
@@ -73,6 +74,8 @@ async function init() {
           return departmentQueries.addDepartment(db);
         case "Delete Department":
           return departmentQueries.deleteDepartment(db);
+        case "Total Utilized Budget Of A Department":
+          return departmentQueries.departmentBudget(db);
         default:
           isFinished = true;
           console.log("See you next time!");
