@@ -63,7 +63,7 @@ async function addEmployee(db) {
           data.firstName,
           data.lastName,
           role_id[0],
-          employee_id[0]
+          employee_id[0],
         ];
 
         db.promise()
@@ -104,10 +104,7 @@ async function updateEmployeeRole(db) {
         const role_id = await helper.getRoleId(db, data.newRole); // Converting the role title to role_id
         const employee_id = await helper.getEmployeeId(db, data.employee); // Converting the employee name to the id
         const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
-        const params = [
-          role_id[0],
-          employee_id[0],
-        ];
+        const params = [role_id[0], employee_id[0]];
 
         db.promise()
           .query(sql, params)
@@ -167,9 +164,47 @@ async function updateEmployeeManager(db) {
   });
 }
 
+// Function to perform the query that lists out all the employees who are under a chosen manager
+async function viewEmployeeByManager(db) {
+  const employeeList = await helper.getEmployeeNames(db); // Getting an array of employee names for the choices parameter
+
+  return new Promise((resolve, reject) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "manager",
+          message: "Who is the manager of the employees you want to view?",
+          choices: employeeList,
+        },
+      ])
+      .then(async (data) => {
+        const manager_id = await helper.getEmployeeId(db, data.manager); // Converting the manager name to the employee id
+        const sql = `SELECT CONCAT_WS(" ", first_name, last_name) AS ? FROM employee WHERE manager_id = ?`;
+        const params = [data.manager, manager_id[0]];
+
+        db.promise()
+          .query(sql, params)
+          .then(([rows, fields]) => {
+            // Check if the employee chosen is a manager of another employee or not
+            if (rows.length === 0) {
+              console.log("\nThis person is NOT a manager!\n");
+              resolve(rows);
+            } else {
+              console.log("\n");
+              console.table(rows);
+              resolve(rows);
+            }
+          })
+          .catch(console.log);
+      });
+  });
+}
+
 module.exports = {
   viewAllEmployee,
   addEmployee,
   updateEmployeeRole,
   updateEmployeeManager,
+  viewEmployeeByManager,
 };

@@ -1,1 +1,1 @@
-SELECT * FROM department;
+SELECT CONCAT_WS(" ", first_name, last_name) FROM employee WHERE manager_id = 1;

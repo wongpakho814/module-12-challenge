@@ -27,6 +27,7 @@ const showMenu = () => {
       "Add Employee",
       "Update Employee Role",
       "Update Employee Manager",
+      "View Employees By Manager",
       "View All Roles",
       "Add Role",
       "View All Departments",
@@ -50,6 +51,8 @@ async function init() {
           return employeeQueries.updateEmployeeRole(db);
         case "Update Employee Manager":
           return employeeQueries.updateEmployeeManager(db);
+        case "View Employees By Manager":
+          return employeeQueries.viewEmployeeByManager(db);
         case "View All Roles":
           return roleQueries.viewAllRole(db);
         case "Add Role":
