@@ -21,7 +21,7 @@ function viewAllRole(db) {
   });
 }
 
-// Function to prompt the user about the information of the employee to be added, and perform the SQL query based on that
+// Function to prompt the user about the information of the role to be added, and perform the SQL query based on that
 async function addRole(db) {
   const departmentList = await helper.getDepartmentNames(db);
 

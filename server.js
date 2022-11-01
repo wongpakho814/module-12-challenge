@@ -52,6 +52,8 @@ async function init() {
         return roleQueries.addRole(db);
       } else if (respond.options === "View All Departments") {
         return departmentQueries.viewAllDepartment(db);
+      } else if (respond.options === "Add Department") {
+        return departmentQueries.addDepartment(db);
       }
     });
   }
