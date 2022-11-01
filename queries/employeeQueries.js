@@ -201,10 +201,53 @@ async function viewEmployeeByManager(db) {
   });
 }
 
+// Function to perform the query that lists out all the employees who are under the same chosen department
+async function viewEmployeeByDepartment(db) {
+  const departmentList = await helper.getDepartmentNames(db); // Getting an array of department names for the choices parameter
+
+  return new Promise((resolve, reject) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "department",
+          message:
+            "Which department do the employees work in that you want to view?",
+          choices: departmentList,
+        },
+      ])
+      .then(async (data) => {
+        const department_id = await helper.getDepartmentId(db, data.department); // Converting the department name to department_id
+        const sql = `SELECT CONCAT_WS(" ", first_name, last_name) AS ? 
+FROM (employee AS e
+INNER JOIN role AS r ON r.id = e.role_id)
+INNER JOIN department AS d ON d.id = r.department_id
+WHERE department_id = ?;`;
+        const params = [data.department, department_id[0]];
+
+        db.promise()
+          .query(sql, params)
+          .then(([rows, fields]) => {
+            // Check if the department chosen has employees or not
+            if (rows.length === 0) {
+              console.log("\nThis department does NOT have any employee!\n");
+              resolve(rows);
+            } else {
+              console.log("\n");
+              console.table(rows);
+              resolve(rows);
+            }
+          })
+          .catch(console.log);
+      });
+  });
+}
+
 module.exports = {
   viewAllEmployee,
   addEmployee,
   updateEmployeeRole,
   updateEmployeeManager,
   viewEmployeeByManager,
+  viewEmployeeByDepartment,
 };
