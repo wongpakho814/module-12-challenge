@@ -106,7 +106,7 @@ async function deleteEmployee(db) {
           })
           .catch(console.log);
 
-        console.log(`Removed ${employee_name[0]} from the database`);
+        console.log(`Removed employee ${employee_name[0]} from the database`);
         resolve(data);
       });
   });

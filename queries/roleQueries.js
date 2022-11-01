@@ -67,7 +67,40 @@ async function addRole(db) {
   });
 }
 
+// Function to prompt the user about the information of the role to be deleted, and perform the SQL query based on that
+async function deleteRole(db) {
+  const roleList = await helper.getRoleTitles(db); // Get the list of role titles
+
+  return new Promise((resolve, reject) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "title",
+          message: "What is the title of the role that you want to delete?",
+          choices: roleList,
+        },
+      ])
+      .then(async (data) => {
+        const role_id = await helper.getRoleId(db, data.title); // Converting the role title to role_id
+        const sql = `DELETE FROM role WHERE id = ?`;
+        const params = [role_id[0]];
+
+        db.promise()
+          .query(sql, params)
+          .then(([rows, fields]) => {
+            resolve(rows);
+          })
+          .catch(console.log);
+
+        console.log(`Removed role ${data.title} from the database`);
+        resolve(data);
+      });
+  });
+}
+
 module.exports = {
   viewAllRole,
   addRole,
+  deleteRole,
 };

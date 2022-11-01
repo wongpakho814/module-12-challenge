@@ -32,6 +32,7 @@ const showMenu = () => {
       "View Employees By Department",
       "View All Roles",
       "Add Role",
+      "Delete Role",
       "View All Departments",
       "Add Department",
       "Quit",
@@ -63,6 +64,8 @@ async function init() {
           return roleQueries.viewAllRole(db);
         case "Add Role":
           return roleQueries.addRole(db);
+        case "Delete Role":
+          return roleQueries.deleteRole(db);
         case "View All Departments":
           return departmentQueries.viewAllDepartment(db);
         case "Add Department":
