@@ -1,67 +1,7 @@
 const mysql = require("mysql2");
 const cTable = require("console.table");
 const inquirer = require("inquirer");
-
-// Function that returns all role titles from the role table as an array
-function getRoleTitles(db) {
-  return new Promise((resolve, reject) => {
-    db.query(`SELECT title FROM role`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result.map((role) => role.title));
-      }
-    });
-  });
-}
-
-// Function to get the role_id specified by the role title
-function getRoleId(db, data) {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `SELECT id FROM role WHERE title = "${data}"`,
-        (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result.map((role_id) => role_id.id));
-          }
-        }
-      );
-    });
-}
-
-// Function to get the employee id specified by the name of the employee
-function getEmployeeId(db, data) {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `SELECT id FROM employee WHERE CONCAT_WS(" ", first_name, last_name) = "${data}"`,
-        (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result.map((employee_id) => employee_id.id));
-          }
-        }
-      );
-    });
-}
-
-// Function that returns all employees names (first+last name) from the employee table as an array
-function getEmployeeNames(db) {
-  return new Promise((resolve, reject) => {
-    db.query(
-      `SELECT CONCAT_WS(" ", first_name, last_name) AS name FROM employee`,
-      (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.map((employee) => employee.name));
-        }
-      }
-    );
-  });
-}
+const helper = require("../helper/simpleQueries");
 
 // Function to perform the query that prints out all employees
 function viewAllEmployee(db) {
@@ -85,8 +25,8 @@ ORDER BY e.id;`;
 
 // Function to prompt the user about the information of the employee to be added, and perform the SQL query based on that
 async function addEmployee(db) {
-  const roles = await getRoleTitles(db); // Getting an array of role titles for the choices parameter
-  const names = await getEmployeeNames(db); // Getting an array of employee names for the choices parameter
+  const roles = await helper.getRoleTitles(db); // Getting an array of role titles for the choices parameter
+  const names = await helper.getEmployeeNames(db); // Getting an array of employee names for the choices parameter
   names.unshift("None");
 
   return new Promise((resolve, reject) => {
@@ -116,8 +56,8 @@ async function addEmployee(db) {
         },
       ])
       .then(async (data) => {
-        const role_id = await getRoleId(db, data.role); // Converting the role title to role_id
-        const employee_id = await getEmployeeId(db, data.manager); // Converting the employee name to the id
+        const role_id = await helper.getRoleId(db, data.role); // Converting the role title to role_id
+        const employee_id = await helper.getEmployeeId(db, data.manager); // Converting the employee name to the id
         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
         const params = [
           data.firstName,
@@ -141,8 +81,8 @@ async function addEmployee(db) {
 
 // Function to perform the query that update an employee's role
 async function updateEmployeeRole(db) {
-  const employeeList = await getEmployeeNames(db); // Getting an array of employee names for the choices parameter
-  const roles = await getRoleTitles(db); // Getting an array of role titles for the choices parameter
+  const employeeList = await helper.getEmployeeNames(db); // Getting an array of employee names for the choices parameter
+  const roles = await helper.getRoleTitles(db); // Getting an array of role titles for the choices parameter
 
   return new Promise((resolve, reject) => {
     inquirer
@@ -161,8 +101,8 @@ async function updateEmployeeRole(db) {
         },
       ])
       .then(async (data) => {
-        const role_id = await getRoleId(db, data.newRole); // Converting the role title to role_id
-        const employee_id = await getEmployeeId(db, data.employee); // Converting the employee name to the id
+        const role_id = await helper.getRoleId(db, data.newRole); // Converting the role title to role_id
+        const employee_id = await helper.getEmployeeId(db, data.employee); // Converting the employee name to the id
         const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
         const params = [
           role_id[0],
