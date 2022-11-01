@@ -122,8 +122,54 @@ async function updateEmployeeRole(db) {
   });
 }
 
+// Function to perform the query that update an employee's manager
+async function updateEmployeeManager(db) {
+  const employeeList = await helper.getEmployeeNames(db); // Getting an array of employee names for the choices parameter
+  const managerList = await helper.getEmployeeNames(db); // Getting an array of employee names for the newManager choices parameter
+  managerList.unshift("None");
+
+  return new Promise((resolve, reject) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "employee",
+          message: "Which employee's role do you want to update?",
+          choices: employeeList,
+        },
+        {
+          type: "list",
+          name: "newManager",
+          message: "Who is the new manager of the selected employee?",
+          choices: managerList,
+        },
+      ])
+      .then(async (data) => {
+        // Check if the updated manager is the employee himself/herself, if so throw an error
+        if (data.employee === data.newManager) {
+          reject("An employee cannot be the manager of himself/herself!");
+        }
+        const employee_id = await helper.getEmployeeId(db, data.employee); // Converting the employee name to the employee id
+        const manager_id = await helper.getEmployeeId(db, data.newManager); // Converting the manager name to the employee id
+        const sql = `UPDATE employee SET manager_id = ? WHERE id = ?`;
+        const params = [manager_id[0], employee_id[0]];
+
+        db.promise()
+          .query(sql, params)
+          .then(([rows, fields]) => {
+            resolve(rows);
+          })
+          .catch(console.log);
+
+        console.log(`Updated ${data.employee}'s manager`);
+        resolve(data);
+      });
+  });
+}
+
 module.exports = {
   viewAllEmployee,
   addEmployee,
-  updateEmployeeRole
+  updateEmployeeRole,
+  updateEmployeeManager,
 };
