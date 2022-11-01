@@ -54,7 +54,11 @@ async function init() {
         return departmentQueries.viewAllDepartment(db);
       } else if (respond.options === "Add Department") {
         return departmentQueries.addDepartment(db);
-      }
+      } else {
+        isFinished = true;
+        console.log("See you next time!");
+        process.exit(0);
+      } 
     });
   }
 }
