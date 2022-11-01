@@ -79,6 +79,39 @@ async function addEmployee(db) {
   });
 }
 
+// Function to perform the query that delete a chosen employee
+async function deleteEmployee(db) {
+  return new Promise((resolve, reject) => {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "id",
+          message: "What is the id of the employee that you want to delete?",
+        },
+      ])
+      .then(async (data) => {
+        const employee_name = await helper.getEmployeeName(db, data.id); // Converting the employee_id to the name
+        // Check if the employee's ID exists in the database
+        if (typeof employee_name[0] === "undefined") {
+          reject(`Employee with ID ${data.id} does not exist!`);
+        }
+        const sql = `DELETE FROM employee WHERE id = ?`;
+        const params = [data.id];
+
+        db.promise()
+          .query(sql, params)
+          .then(([rows, fields]) => {
+            resolve(rows);
+          })
+          .catch(console.log);
+
+        console.log(`Removed ${employee_name[0]} from the database`);
+        resolve(data);
+      });
+  });
+}
+
 // Function to perform the query that update an employee's role
 async function updateEmployeeRole(db) {
   const employeeList = await helper.getEmployeeNames(db); // Getting an array of employee names for the choices parameter
@@ -246,6 +279,7 @@ WHERE department_id = ?;`;
 module.exports = {
   viewAllEmployee,
   addEmployee,
+  deleteEmployee,
   updateEmployeeRole,
   updateEmployeeManager,
   viewEmployeeByManager,
