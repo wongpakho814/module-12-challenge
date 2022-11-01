@@ -61,7 +61,7 @@ async function addRole(db) {
           })
           .catch(console.log);
 
-        console.log(`Added role ${data.title} to the database`);
+        console.log(`\nAdded role ${data.title} to the database\n`);
         resolve(data);
       });
   });
@@ -93,7 +93,7 @@ async function deleteRole(db) {
           })
           .catch(console.log);
 
-        console.log(`Removed role ${data.title} from the database`);
+        console.log(`\nRemoved role ${data.title} from the database\n`);
         resolve(data);
       });
   });

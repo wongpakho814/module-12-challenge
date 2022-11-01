@@ -35,6 +35,7 @@ const showMenu = () => {
       "Delete Role",
       "View All Departments",
       "Add Department",
+      "Delete Department",
       "Quit",
     ],
   });
@@ -70,6 +71,8 @@ async function init() {
           return departmentQueries.viewAllDepartment(db);
         case "Add Department":
           return departmentQueries.addDepartment(db);
+        case "Delete Department":
+          return departmentQueries.deleteDepartment(db);
         default:
           isFinished = true;
           console.log("See you next time!");

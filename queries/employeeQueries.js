@@ -73,7 +73,7 @@ async function addEmployee(db) {
           })
           .catch(console.log);
 
-        console.log(`Added ${data.firstName} ${data.lastName} to the database`);
+        console.log(`\nAdded ${data.firstName} ${data.lastName} to the database\n`);
         resolve(data);
       });
   });
@@ -106,7 +106,7 @@ async function deleteEmployee(db) {
           })
           .catch(console.log);
 
-        console.log(`Removed employee ${employee_name[0]} from the database`);
+        console.log(`\nRemoved employee ${employee_name[0]} from the database\n`);
         resolve(data);
       });
   });
@@ -146,7 +146,7 @@ async function updateEmployeeRole(db) {
           })
           .catch(console.log);
 
-        console.log(`Updated ${data.employee}'s role`);
+        console.log(`\nUpdated ${data.employee}'s role\n`);
         resolve(data);
       });
   });
@@ -191,7 +191,7 @@ async function updateEmployeeManager(db) {
           })
           .catch(console.log);
 
-        console.log(`Updated ${data.employee}'s manager`);
+        console.log(`\nUpdated ${data.employee}'s manager\n`);
         resolve(data);
       });
   });
